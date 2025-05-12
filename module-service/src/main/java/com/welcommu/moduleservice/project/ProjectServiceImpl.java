@@ -36,9 +36,11 @@ import com.welcommu.moduleservice.project.dto.ProjectSnapshot;
 import com.welcommu.moduleservice.project.dto.ProjectSummaryWithRoleDto;
 import com.welcommu.moduleservice.project.dto.ProjectUserResponse;
 import com.welcommu.moduleservice.project.dto.ProjectUserSummaryResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,23 +136,22 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectMonthlyStats> getMonthlyProjectStats() {
-        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+        LocalDate now = LocalDate.now();
 
         // 레포지토리에서 해당 기간 내의 프로젝트를 모두 조회
-        List<Project> projects = projectRepository.findByCreatedAtBetweenAndIsDeletedFalse(sixMonthsAgo, now);
+        List<Project> projects = projectRepository.findByStartDateBetweenAndIsDeletedFalse(sixMonthsAgo, now);
 
         // 월별 통계 계산
         Map<String, Long> totalProjectsMap = new HashMap<>();
         Map<String, Long> completedProjectsMap = new HashMap<>();
 
         for (Project project : projects) {
-            String month = project.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            // createdAt 대신 startDate 로 뽑아야 조회기간 기준과 맞아 떨어집니다.
+            String month = project.getStartDate()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
-            // 총 프로젝트 수 카운트
             totalProjectsMap.put(month, totalProjectsMap.getOrDefault(month, 0L) + 1);
-
-            // 완료된 프로젝트 수 카운트
             if (project.getProjectStatus() == ProjectStatus.COMPLETED) {
                 completedProjectsMap.put(month, completedProjectsMap.getOrDefault(month, 0L) + 1);
             }
@@ -162,6 +163,9 @@ public class ProjectServiceImpl implements ProjectService {
             Long completedProjects = completedProjectsMap.getOrDefault(month, 0L);
             stats.add(new ProjectMonthlyStats(month, totalProjects, completedProjects));
         }
+
+        // 날짜순으로 정렬
+        stats.sort(Comparator.comparing(ProjectMonthlyStats::getMonth));
 
         return stats;
     }
