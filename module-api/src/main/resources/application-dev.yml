@@ -1,9 +1,18 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: redis-dev
+      port: 6379
 
   jpa:
     hibernate:
@@ -13,25 +22,21 @@ spring:
       hibernate:
         format_sql: true
 
-  data:
-    redis:
-      host: redis-dev
-      port: 6379
-
-
-  properties:
-    hibernate:
-      format_sql: true
-
 logging:
   level:
     org.springframework.security: DEBUG
-server:
-  port: 443
-  ssl:
-    enabled: true
-    key-store: file:/app/keystore.p12
-    key-store-password: ${SSLPASSWORD}
+  execution-time:
+    enabled: false
 
-    key-store-type: PKCS12
-    key-alias: mycert
+
+server:
+  port: 8080
+  forward-headers-strategy: native
+
+
+jwt:
+  access-token-ttl: ${ACCESS_TOKEN_TTL}
+  refresh-token-ttl: ${REFRESH_TOKEN_TTL}
+
+gmail:
+  appkey: ${GMAIL_APPKEY}

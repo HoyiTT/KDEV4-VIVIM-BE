@@ -1,5 +1,6 @@
 package com.welcommu.moduledomain.company;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -44,18 +46,10 @@ public class Company {
     private Boolean isDeleted;
     private String coOwner;
 
+    @Version
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long version;
+
     @Enumerated(EnumType.STRING)
     private CompanyRole companyRole;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (isDeleted == null) {
-            isDeleted = false;  // 기본값을 false로 설정
-        }
-    }
-
-
 }

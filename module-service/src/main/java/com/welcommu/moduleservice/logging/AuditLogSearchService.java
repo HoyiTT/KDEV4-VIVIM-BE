@@ -1,43 +1,42 @@
 package com.welcommu.moduleservice.logging;
 
-import com.welcommu.moduledomain.logging.AuditLog;
 import com.welcommu.moduledomain.logging.enums.ActionType;
 import com.welcommu.moduledomain.logging.enums.TargetType;
-import com.welcommu.moduleinfra.logging.AuditLogRepository;
 import com.welcommu.moduleservice.logging.dto.AuditLogResponse;
-import java.time.LocalDate;
+import com.welcommu.moduleservice.logging.dto.LogsWithCursor;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-@Service
-@RequiredArgsConstructor
-public class AuditLogSearchService {
-    private final AuditLogRepository auditLogRepository;
-
-    public List<AuditLogResponse> getAllLogs() {
-        return auditLogRepository.findAll().stream()
-            .map(AuditLogResponse::from)
-            .toList();
-    }
-
-    public List<AuditLogResponse> searchLogs(
+public interface AuditLogSearchService {
+    List<AuditLogResponse> getAllLogs();
+    Page<AuditLogResponse> searchLogs(
         ActionType actionType,
         TargetType targetType,
         String startDate,
         String endDate,
-        Long userId
-    ) {
-        LocalDateTime start = (startDate != null) ? LocalDate.parse(startDate).atStartOfDay() : null;
-        LocalDateTime end = (endDate != null) ? LocalDate.parse(endDate).atTime(LocalTime.MAX) : null;
+        Long userId,
+        Pageable pageable
+    );
+    LogsWithCursor<AuditLogResponse> searchLogs(
+        ActionType actionType,
+        TargetType targetType,
+        String startDate,
+        String endDate,
+        Long userId,
+        LocalDateTime cursorLoggedAt,
+        Long cursorId,
+        int size
+    );
 
-        List<AuditLog> logs = auditLogRepository.findByConditions(actionType, targetType, start, end, userId);
-
-        return logs.stream()
-            .map(AuditLogResponse::from)
-            .toList();
-    }
-
+    LogsWithCursor<AuditLogResponse> searchLogsByPage(
+        ActionType actionType,
+        TargetType targetType,
+        String startDate,
+        String endDate,
+        Long userId,
+        int page,
+        int size
+    );
 }

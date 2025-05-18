@@ -2,6 +2,8 @@ package com.welcommu.moduledomain.project;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 @Entity
@@ -51,6 +52,19 @@ public class Project {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
+    @Column(name = "current_progress")
+    private String currentProgress;
+
+    @Column(name = "project_fee")
+    private Integer projectFee;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "project_status")
+    private ProjectStatus projectStatus;
+
+    @Column(name = "project_fee_paid_date")
+    private LocalDate projectFeePaidDate;
+
     public void setName(String name) {
         this.name = name;
     }
@@ -81,6 +95,22 @@ public class Project {
 
     public void setIsDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public void setProjectFee(Integer projectFee) {
+        this.projectFee = projectFee;
+    }
+
+    public void setCurrentProgress(String currentProgress) {
+        this.currentProgress = currentProgress;
+    }
+
+    public void setProjectStatus(ProjectStatus projectStatus) {
+        this.projectStatus = projectStatus;
+    }
+
+    public void setProjectFeePaidDate() {
+        this.projectFeePaidDate = LocalDate.now();
     }
 
 

@@ -43,7 +43,7 @@ class ProjectServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private ProjectService projectService;
+    private ProjectServiceImpl projectService;
 
     @Test
     void 프로젝트_생성_성공() {
@@ -68,4 +68,6 @@ class ProjectServiceTest {
         verify(progressRepository, times(6)).save(any(ProjectProgress.class)); // 초기 6단계 저장
         verify(projectUserRepository).saveAll(mockUsers);
     }
+
+
 }

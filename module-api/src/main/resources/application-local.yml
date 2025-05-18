@@ -25,12 +25,17 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
-server:
-  port: 443
-  ssl:
-    enabled: true
-    key-store: classpath:keystore.p12
-    key-store-password: ${SSLPASSWORD}
+  execution-time:
+    enabled: false
 
-    key-store-type: PKCS12
-    key-alias: mycert
+
+server:
+  port: 8080
+
+
+jwt:
+  access-token-ttl: ${ACCESS_TOKEN_TTL}
+  refresh-token-ttl: ${REFRESH_TOKEN_TTL}
+
+gmail:
+  appkey: ${GMAIL_APPKEY}
